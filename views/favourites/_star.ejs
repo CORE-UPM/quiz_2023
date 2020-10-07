@@ -1,0 +1,16 @@
+
+<!--
+    Add the appropriate star to the quiz given into the parameter.
+
+    Only the star is only shown if there is a user logged in.
+    Depending on the value of the favorite attribute, the star is gray or yellow.
+-->
+
+<% if (locals.loginUser) { %>
+
+    <img class="star"
+         data-favourite="<%= !!quiz.favourite %>"
+         data-quiz-id="<%= quiz.id %>"
+    />
+
+<% } %>

@@ -7,6 +7,8 @@
     Play:
 </h1>
 
+<% include ../favourites/_star_onclick.ejs %>
+
 <form method="get" action="/quizzes/<%= quiz.id %>/check">
 
 
@@ -17,6 +19,8 @@
         </div>
 
         <div>
+            <% include ../favourites/_star.ejs %>
+            <br/>
             <b><%= quiz.question %></b>
 
             <div class="wideRow">

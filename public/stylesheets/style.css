@@ -136,6 +136,27 @@ a.button:hover, input.button:hover {
   width: 40px;
   height: 40px;
 }
+
+.stars {
+  float: left;
+  clear: both;
+}
+
+/* ------------------------- */
+
+img.star {
+  width: 30px;
+  height: 30px;
+}
+
+img.star[data-favourite=true] {
+  content: url(/images/star_yellow.png);
+}
+
+img.star[data-favourite=false] {
+  content: url(/images/star_grey.png);
+}
+
 /* ------------------------- */
 
 .wideRow {

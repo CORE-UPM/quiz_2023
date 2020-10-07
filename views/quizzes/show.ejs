@@ -7,6 +7,8 @@
     Show Quiz:
 </h1>
 
+<% include ../favourites/_star_onclick.ejs %>
+
 <div class="quizItem">
 
     <div>
@@ -14,6 +16,8 @@
     </div>
 
     <div>
+        <% include ../favourites/_star.ejs %>
+        <br/>
         Question: <b><%= quiz.question %></b>
         <br/>
         Answer: <b><%= quiz.answer %></b>

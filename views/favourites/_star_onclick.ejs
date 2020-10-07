@@ -1,0 +1,23 @@
+<% if (locals.loginUser) { %>
+
+    <script type="module">
+
+        document.addEventListener("click", async ev => {
+            if (ev.target.matches("img.star")) {
+
+                ev.preventDefault();
+
+                const url = "/users/<%= locals.loginUser.id %>/favourites/" + ev.target.dataset.quizId;
+                const method = ev.target.dataset.favourite === "true" ? "DELETE" : "PUT";
+                const headers = {"X-Requested-With": "XMLHttpRequest"};
+
+                const response = await fetch(url, { method, headers });
+
+                if (response.ok) {
+                    ev.target.dataset.favourite = ev.target.dataset.favourite === "false";
+                }
+            }
+        })
+    </script>
+
+<% } %>

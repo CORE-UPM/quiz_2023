@@ -10,10 +10,12 @@ const upload = multer({
 const userController = require('../controllers/user');
 const sessionController = require("../controllers/session");
 const quizController = require("../controllers/quiz");
+const favouriteController = require("../controllers/favourite");
 
 
 // Autoload for routes using :userId
 router.param('userId', userController.load);
+router.param('quizId', quizController.load);
 
 // Routes for the resource /users
 router.get('/',
@@ -65,5 +67,15 @@ router.get('/:userId(\\d+)/quizzes',
   sessionController.loginRequired,
   quizController.index);
 
+
+// Routes for the resource favourites of a user
+router.put('/:userId(\\d+)/favourites/:quizId(\\d+)',
+  sessionController.loginRequired,
+  sessionController.adminOrMyselfRequired,
+  favouriteController.add);
+router.delete('/:userId(\\d+)/favourites/:quizId(\\d+)',
+  sessionController.loginRequired,
+  sessionController.adminOrMyselfRequired,
+  favouriteController.del);
 
 module.exports = router;
