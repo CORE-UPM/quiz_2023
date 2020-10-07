@@ -15,10 +15,23 @@ router.get('/',
 router.get('/:userId(\\d+)',
   sessionController.loginRequired,
   userController.show);
-router.get('/new',
-  userController.new);
-router.post('/',
-  userController.create);
+
+if (!!process.env.QUIZ_OPEN_REGISTER) {
+    router.get('/new',
+      userController.new);
+    router.post('/',
+      userController.create);
+} else {
+    router.get('/new',
+      sessionController.loginRequired,
+      sessionController.adminRequired,
+      userController.new);
+    router.post('/',
+      sessionController.loginRequired,
+      sessionController.adminRequired,
+      userController.create);
+}
+
 router.get('/:userId(\\d+)/edit',
   sessionController.loginRequired,
   userController.isLocalRequired,
