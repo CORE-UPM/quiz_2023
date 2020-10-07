@@ -5,12 +5,14 @@ const {models} = require("../models");
 
 const paginate = require('../helpers/paginate').paginate;
 
+
 // Autoload el quiz asociado a :quizId
 exports.load = async (req, res, next, quizId) => {
 
     try {
         const quiz = await models.Quiz.findByPk(quizId, {
             include: [
+                {model: models.Attachment, as: 'attachment'},
                 {model: models.User, as: 'author'}
             ]
         });
@@ -29,7 +31,7 @@ exports.load = async (req, res, next, quizId) => {
 // MW that allows actions only if the user logged in is admin or is the author of the quiz.
 exports.adminOrAuthorRequired = (req, res, next) => {
 
-    const isAdmin  = !!req.loginUser.isAdmin;
+    const isAdmin = !!req.loginUser.isAdmin;
     const isAuthor = req.load.quiz.authorId === req.loginUser.id;
 
     if (isAdmin || isAuthor) {
@@ -56,9 +58,9 @@ exports.index = async (req, res, next) => {
     // Search:
     const search = req.query.search || '';
     if (search) {
-        const search_like = "%" + search.replace(/ +/g,"%") + "%";
+        const search_like = "%" + search.replace(/ +/g, "%") + "%";
 
-        countOptions.where.question = { [Op.like]: search_like };
+        countOptions.where.question = {[Op.like]: search_like};
         findOptions.where.question = { [Op.like]: search_like };
     }
 
@@ -90,7 +92,10 @@ exports.index = async (req, res, next) => {
 
         findOptions.offset = items_per_page * (pageno - 1);
         findOptions.limit = items_per_page;
-        findOptions.include = [{model: models.User, as: 'author'}];
+        findOptions.include = [
+            {model: models.Attachment, as: 'attachment'},
+            {model: models.User, as: 'author'}
+        ];
 
         const quizzes = await models.Quiz.findAll(findOptions);
         res.render('quizzes/index.ejs', {
@@ -109,7 +114,9 @@ exports.show = (req, res, next) => {
 
     const {quiz} = req.load;
 
-    res.render('quizzes/show', {quiz});
+    res.render('quizzes/show', {
+        quiz
+    });
 };
 
 
@@ -128,20 +135,29 @@ exports.new = (req, res, next) => {
 exports.create = async (req, res, next) => {
 
     const {question, answer} = req.body;
-
     const authorId = req.loginUser && req.loginUser.id || 0;
 
-    let quiz = models.Quiz.build({
-        question,
-        answer,
-        authorId
-    });
+    let quiz = models.Quiz.build({question, answer, authorId});
 
     try {
         // Saves only the fields question and answer into the DDBB
         quiz = await quiz.save({fields: ["question", "answer", "authorId"]});
         req.flash('success', 'Quiz created successfully.');
-        res.redirect('/quizzes/' + quiz.id);
+
+        try {
+            if (!req.file) {
+                req.flash('info', 'Quiz without attachment.');
+                return;
+            }
+
+            // Create the quiz attachment
+            await createQuizAttachment(req, quiz);
+
+        } catch (error) {
+            req.flash('error', 'Failed to create attachment: ' + error.message);
+        } finally {
+            res.redirect('/quizzes/' + quiz.id);
+        }
     } catch (error) {
         if (error instanceof Sequelize.ValidationError) {
             req.flash('error', 'There are errors in the form:');
@@ -149,9 +165,27 @@ exports.create = async (req, res, next) => {
             res.render('quizzes/new', {quiz});
         } else {
             req.flash('error', 'Error creating a new Quiz: ' + error.message);
-            next(error);
+            next(error)
         }
     }
+};
+
+// Aux function to upload req.file to cloudinary, create an attachment with it, and
+// associate it with the gien quiz.
+// This function is called from the create an update middleware. DRY.
+const createQuizAttachment = async (req, quiz) => {
+
+    const image = req.file.buffer.toString('base64');
+    const url = `${req.protocol}://${req.get('host')}/quizzes/${quiz.id}/attachment`;
+
+    // Create the new attachment into the data base.
+    const attachment = await models.Attachment.create({
+        mime: req.file.mimetype,
+        image,
+        url
+    });
+    await quiz.setAttachment(attachment);
+    req.flash('success', 'Attachment saved successfully.');
 };
 
 
@@ -176,7 +210,29 @@ exports.update = async (req, res, next) => {
     try {
         await quiz.save({fields: ["question", "answer"]});
         req.flash('success', 'Quiz edited successfully.');
-        res.redirect('/quizzes/' + quiz.id);
+
+        try {
+            if (req.body.keepAttachment) return; // Don't change the attachment.
+
+            // Delete old attachment.
+            if (quiz.attachment) {
+                await quiz.attachment.destroy();
+                await quiz.setAttachment();
+            }
+
+            if (!req.file) {
+                req.flash('info', 'Quiz without attachment.');
+                return;
+            }
+
+            // Create the quiz attachment
+            await createQuizAttachment(req, quiz);
+
+        } catch (error) {
+            req.flash('error', 'Failed saving the new attachment: ' + error.message);
+        } finally {
+            res.redirect('/quizzes/' + quiz.id);
+        }
     } catch (error) {
         if (error instanceof Sequelize.ValidationError) {
             req.flash('error', 'There are errors in the form:');
@@ -193,11 +249,14 @@ exports.update = async (req, res, next) => {
 // DELETE /quizzes/:quizId
 exports.destroy = async (req, res, next) => {
 
+    const attachment = req.load.quiz.attachment;
+
     try {
         await req.load.quiz.destroy();
+        await attachment?.destroy();
         req.flash('success', 'Quiz deleted successfully.');
         res.redirect('/goback');
-    } catch (error) {
+    }  catch(error) {
         req.flash('error', 'Error deleting the Quiz: ' + error.message);
         next(error);
     }
@@ -234,3 +293,23 @@ exports.check = (req, res, next) => {
         answer
     });
 };
+
+
+// GET /quizzes/:quizId/attachment
+exports.attachment = (req, res, next) => {
+
+    const {quiz} = req.load;
+
+    const {attachment} = quiz;
+
+    if (!attachment) {
+        res.redirect("/images/none.png");
+    } else if (attachment.image) {
+        attachment.mime && res.type(attachment.mime);
+        res.send(Buffer.from(attachment.image.toString(), 'base64'));
+    } else if (attachment.url) {
+        res.redirect(attachment.url);
+    } else {
+        res.redirect("/images/none.png");
+    }
+}

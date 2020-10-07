@@ -10,29 +10,29 @@
     <%= title || "Quizzes" %>:
 </h1>
 
-<table>
+<table id="quizzesIndex">
     <% for (let quiz of quizzes) { %>
         <tr>
             <td>
-                <a href="/quizzes/<%= quiz.id %>/play"><%= quiz.question %></a>
+                <% include ../attachments/_attachment %>
             </td>
-            <td colspan="2">
+
+            <td>
+                <a href="/quizzes/<%= quiz.id %>/play"><%= quiz.question %></a>
+                <br />
                 <small> (by <%= quiz.author ? quiz.author.displayName : "Anonymous" %>) </small>
             </td>
 
-            <% if (locals.loginUser && (locals.loginUser.isAdmin || locals.loginUser.id === quiz.authorId)) { %>
-                <td>
+            <td>
+                <% if (locals.loginUser && (locals.loginUser.isAdmin || locals.loginUser.id === quiz.authorId)) { %>
                     <a href="/quizzes/<%= quiz.id %>" class="button">Show</a>
-                </td>
-                <td>
+
                     <a href="/quizzes/<%= quiz.id %>/edit" class="button">Edit</a>
-                </td>
-                <td>
                     <a href="/quizzes/<%= quiz.id %>?_method=DELETE"
                        onClick="return confirm('Delete: <%= quiz.question %>');"
                        class="button">Delete</a>
-                </td>
-            <% } %>
+                <% } %>
+            </td>
         </tr>
     <% } %>
 </table>
