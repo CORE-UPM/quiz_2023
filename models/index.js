@@ -23,4 +23,9 @@ Quiz.hasOne(Attachment, {as: 'attachment', foreignKey: 'quizId'});
 Attachment.belongsTo(Quiz, {as: 'quiz', foreignKey: 'quizId'});
 
 
+// Relation 1-to-1 between User and Attachment
+User.hasOne(Attachment, {as: "photo", foreignKey: 'userId'});
+Attachment.belongsTo(User, {as: 'user', foreignKey: 'userId'});
+
+
 module.exports = sequelize;

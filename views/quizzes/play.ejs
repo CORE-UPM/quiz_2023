@@ -23,8 +23,12 @@
                 <input type="text" class="itemWide" name="answer" value="<%= answer %>" placeholder="Answer" autocomplete="off"/>
                 <input type="submit" class="itemNarrow" value="Check">
             </div>
+        </div>
 
-            <small> by <%= quiz.author ? quiz.author.displayName : "Anonymous" %> </small>
+        <div>
+            <% include ../attachments/_miniphoto %>
+            <br />
+            <small> <%= quiz.author ? quiz.author.displayName : "Anonymous" %> </small>
         </div>
     </div>
 

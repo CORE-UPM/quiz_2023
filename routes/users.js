@@ -1,6 +1,12 @@
 var express = require('express');
 var router = express.Router();
 
+const multer = require('multer');
+const storage = multer.memoryStorage()
+const upload = multer({
+    storage: storage,
+    limits: {fileSize: 20 * 1024 * 1024}});
+
 const userController = require('../controllers/user');
 const sessionController = require("../controllers/session");
 const quizController = require("../controllers/quiz");
@@ -21,6 +27,7 @@ if (!!process.env.QUIZ_OPEN_REGISTER) {
     router.get('/new',
       userController.new);
     router.post('/',
+      upload.single('photo'),
       userController.create);
 } else {
     router.get('/new',
@@ -30,6 +37,7 @@ if (!!process.env.QUIZ_OPEN_REGISTER) {
     router.post('/',
       sessionController.loginRequired,
       sessionController.adminRequired,
+      upload.single('photo'),
       userController.create);
 }
 
@@ -42,12 +50,16 @@ router.put('/:userId(\\d+)',
   sessionController.loginRequired,
   userController.isLocalRequired,
   sessionController.adminOrMyselfRequired,
+  upload.single('photo'),
   userController.update);
 router.delete('/:userId(\\d+)',
   sessionController.loginRequired,
   sessionController.adminOrMyselfRequired,
   userController.destroy);
 
+// Route to user photo
+router.get('/:userId(\\d+)/photo',
+  userController.photo);
 
 router.get('/:userId(\\d+)/quizzes',
   sessionController.loginRequired,

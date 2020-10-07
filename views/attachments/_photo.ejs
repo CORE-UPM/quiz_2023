@@ -1,0 +1,10 @@
+
+<% var photo = user.photo; %>
+
+<% if (photo?.url) { %>
+    <img class="photo" src="<%= photo.url %>" alt="Photo" />
+<% } else if (photo?.image) { %>
+    <img class="photo" src="data:<%= photo.mime %>;base64,<%= photo.image %>" alt="Photo" />
+<% } else { %>
+    <img class="photo" src="/images/face.png" alt="Photo" />
+<% } %>

@@ -1,0 +1,10 @@
+
+<% var photo = quiz.author?.photo; %>
+
+<% if (photo?.url) { %>
+    <img class="miniphoto" src="<%= photo.url %>" alt="Photo" />
+<% } else if (photo?.image) { %>
+    <img class="miniphoto" src="data:<%= photo.mime %>;base64,<%= photo.image %>" alt="Photo" />
+<% } else { %>
+    <img class="miniphoto" src="/images/face.png" alt="Photo" />
+<% } %>

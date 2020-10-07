@@ -19,11 +19,16 @@
 
             <td>
                 <a href="/quizzes/<%= quiz.id %>/play"><%= quiz.question %></a>
-                <br />
-                <small> (by <%= quiz.author ? quiz.author.displayName : "Anonymous" %>) </small>
             </td>
 
             <td>
+                <% include ../attachments/_miniphoto %>
+                <br/>
+
+                <small> <%= quiz.author ? quiz.author.displayName : "Anonymous" %> </small>
+
+                <br/>
+
                 <% if (locals.loginUser && (locals.loginUser.isAdmin || locals.loginUser.id === quiz.authorId)) { %>
                     <a href="/quizzes/<%= quiz.id %>" class="button">Show</a>
 
