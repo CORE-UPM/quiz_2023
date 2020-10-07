@@ -24,6 +24,7 @@ router.get('/:quizId(\\d+)',
   quizController.show);
 router.get('/new',
   sessionController.loginRequired,
+  quizController.limitPerDay,
   quizController.new);
 router.post('/',
   sessionController.loginRequired,
