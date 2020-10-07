@@ -29,6 +29,39 @@
     </nav>
 
     <section class="main" id="mainSection">
+        <% if (messages.info) { %>
+            <article class='flash flashinfo'>
+                <h3>Information of interest:</h3>
+                <ul>
+                    <% for (let msg of messages.info) { %>
+                        <li> <%= msg %> </li>
+                    <% } %>
+                </ul>
+            </article>
+        <% } %>
+
+        <% if (messages.success) { %>
+            <article class='flash flashsuccess'>
+                <h3>Tasks completed successfully:</h3>
+                <ul>
+                    <% for (let msg of messages.success) { %>
+                        <li> <%= msg %> </li>
+                    <% } %>
+                </ul>
+            </article>
+        <% } %>
+
+        <% if (messages.error) { %>
+            <article class='flash flasherror'>
+                <h3>Errors:</h3>
+                <ul>
+                    <% for (let msg of messages.error) { %>
+                        <li> <%= msg %> </li>
+                    <% } %>
+                </ul>
+            </article>
+        <% } %>
+
         <%- body %>
     </section>
 

@@ -60,6 +60,26 @@ a {
   color: var(--primary);
 }
 
+a.button {
+  display: inline-block;
+  font-size: x-small;
+  text-decoration: none;
+  padding: 1px 4px;
+  margin: 2px;
+  background: #f5f5f5;
+  color: black;
+  border-radius: 4px;
+  border: solid 1px lightgray;
+}
+
+a.button:hover {
+  background: lightgray;
+}
+
+.right {
+  float: right;
+}
+
 #authorlogos {
   display: flex;
   align-items: center;
@@ -69,3 +89,69 @@ a {
 .authorlogo {
   width: 8%;
 }
+
+.wideRow {
+  display: flex;
+  flex-flow: row wrap;
+  align-content: stretch;
+}
+
+.wideRow .itemNarrow {
+  flex: 0 auto;
+  margin: 0px 5px;
+}
+
+.wideRow .itemWide {
+  flex: 1 auto;
+  margin: 0px 5px;
+}
+
+.flash {
+  width: auto;
+  padding: 7px;
+  padding-bottom: 0;
+  margin-bottom: 20px;
+  background-color: #f0f0f0;
+  color: #000;
+}
+
+.flashinfo {
+  border: 2px solid blue;
+}
+
+.flashsuccess {
+  border: 2px solid green;
+}
+
+.flasherror {
+  border: 2px solid red;
+}
+
+.flash h3 {
+  text-align: left;
+  font-weight: bold;
+  padding: 5px 5px 5px 15px;
+  font-size: 12px;
+  margin: -7px;
+  margin-bottom: 0px;
+}
+
+.flashinfo h3 {
+  background-color: #00c;
+  color: #ffffff;
+}
+
+.flashsuccess h3 {
+  background-color: #0c0;
+}
+
+.flasherror h3 {
+  background-color: #c00;
+}
+
+.flash ul li {
+  margin: 5px 5px 5px 0px;
+  font-size: 12px;
+  list-style: square;
+}
+
