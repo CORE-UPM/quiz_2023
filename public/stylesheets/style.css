@@ -1,10 +1,63 @@
+
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  --primary: #2f5d62;
+  --primary2: #5e8b7e;
+  --secondary: #a7c4bc;
+  --secondary2: #dfeeea;
+  font: 16px "Lucida Grande", Helvetica, Arial, sans-serif;
+  margin: 0;
+  background: white;
+  color: var(--primary);
+}
+
+#page {
+  display: flex;
+  flex-flow: row wrap;
+  margin: 2px auto;
+  padding: 0px;
+}
+
+.main {
+  flex: 1 100%;
+  padding: 2px;
+  margin: 1px;
+}
+
+#mainHeader {
+  text-align: center;
+  background-color: var(--primary);
+}
+
+#mainNav {
+  text-align: center;
+  border-bottom: 1px solid var(--secondary);
+  border-right: 0px;
+}
+
+#mainFooter {
+  font-size: x-small;
+  padding: 3px 0;
+  text-align: center;
+  border-top: 1px solid;
+  border-bottom: 1px solid;
+}
+
+#mainHeader h1 {
+  margin: 8px;
+  color: white;
+}
+
+#mainNav a {
+  margin: 0px 5px;
+}
+
+#mainSection {
+  padding: 0px 10px;
+  text-align: left;
 }
 
 a {
-  color: #00B7FF;
+  color: var(--primary);
 }
 
 #authorlogos {

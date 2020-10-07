@@ -1,0 +1,17 @@
+
+#mainNav {
+    flex: 0 auto;
+    border-right: 1px solid var(--secondary);
+    border-bottom: 0px;}
+
+#mainNav a {
+    display: block;
+    text-align: left;
+}
+
+#mainSection {
+    flex: 1;
+    overflow: auto;
+}
+
+
