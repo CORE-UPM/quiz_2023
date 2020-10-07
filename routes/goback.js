@@ -24,6 +24,7 @@ router.get(
   [
       '/',
       '/author',
+      '/users',
       '/quizzes'
   ],
   saveBack);
