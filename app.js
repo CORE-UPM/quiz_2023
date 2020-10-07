@@ -9,6 +9,7 @@ var SequelizeStore = require('connect-session-sequelize')(session.Store);
 var partials = require('express-partials');
 var flash = require('express-flash');
 
+var gobackRouter = require('./routes/goback');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
@@ -43,6 +44,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(partials());
 app.use(flash());
 
+app.use('/', gobackRouter);
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
