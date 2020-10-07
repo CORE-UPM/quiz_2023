@@ -6,3 +6,13 @@ body {
 a {
   color: #00B7FF;
 }
+
+#authorlogos {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.authorlogo {
+  width: 8%;
+}
