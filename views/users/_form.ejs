@@ -45,51 +45,66 @@
             <label for="preg" class="rem">User name:</label>
             <input type="text" id="username" name="username" value="<%= user.username %>" autocomplete="off"/>
         <% } else { %>
-            Username: <%= user.username %>
+            Username: <%= user.displayName %>
         <% } %>
     </li>
+
+    <% if ( user.id) { %>
+        <% if (locals.loginUser.isAdmin || locals.loginUser.id === user.id) { %>
+            <li>
+                Token:
+                <b><%= user.token || 'NO TOKEN' %></b>
+                <a href="/users/<%= user.id %>/token?_method=PUT" class="button">Generate new token</a>
+            </li>
+        <% } %>
+    <% } %>
 
     <li>
         <div>
             Photo:
             <br/>
 
-            <% if (user.id) { %>
+            <% if (!user.accountTypeId) { %>
+                <% if (user.id) { %>
+                    <div>
+                        <label for="img">Keep the current photo:</label>
+                        <input type="checkbox" id="keepPhoto" name="keepPhoto" value="1" checked>
+                    </div>
+                <% } %>
+
                 <div>
-                    <label for="img">Keep the current photo:</label>
-                    <input type="checkbox" id="keepPhoto" name="keepPhoto" value="1" checked>
+                    <label for="img">Attach file (Max size 2MB):</label>
+                    <input type="file" id="photo" accept="image/*" name="photo">
                 </div>
             <% } %>
-
-            <div>
-                <label for="img">Attach file (Max size 2MB):</label>
-                <input type="file" id="photo" accept="image/*" name="photo">
-            </div>
 
             <% var photo = user.photo; %>
             <% include ../attachments/_photo %>
         </div>
     </li>
 
-    <li>
-        <% if (!user.id) { %>
-            <span class="text-danger">Enter the new password twice</span>
-        <% } else { %>
-            <span class="text-danger">Leave blank to not change the current password</span>
-        <% } %>
-        <ul>
-            <li>
-                <label for="user_password" class="rem">Password:</label>
-                <input type="password" id="user_password" name="password" autocomplete="off"/>
-            </li>
+    <% if (!user.accountTypeId) { %>
+        <li>
+            <% if (!user.id) { %>
+                <span class="text-danger">Enter the new password twice</span>
+            <% } else { %>
+                <span class="text-danger">Leave blank to not change the current password</span>
+            <% } %>
+            <ul>
+                <li>
+                    <label for="user_password" class="rem">Password:</label>
+                    <input type="password" id="user_password" name="password" autocomplete="off"/>
+                </li>
 
-            <li>
-                <label for="user_confirm_password" class="rem">Confirm Password:</label>
-                <input type="password" id="user_confirm_password" autocomplete="off"/>
-            </li>
-        </ul>
+                <li>
+                    <label for="user_confirm_password" class="rem">Confirm Password:</label>
+                    <input type="password" id="user_confirm_password" autocomplete="off"/>
+                </li>
+            </ul>
 
-    </li>
+        </li>
+    <% } %>
+
 </ul>
 
 <div>

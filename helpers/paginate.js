@@ -1,16 +1,16 @@
 const urlm = require('url');
 
-function addPagenoToUrl(req, pageno) {
+const addPagenoToUrl = (req, pageno) => {
     const url = new urlm.URL(req.protocol + "://" + req.get('host') + req.baseUrl + req.url);
     url.searchParams.set("pageno", pageno);
     return url.href;
-}
+};
 
 
 // Helper function used to paginate.
 // Return the HTML links used to paginate.
 //
-exports.paginate = (totalItems, itemsPerPage, currentPage, req, param_name) => {
+const paginate = (totalItems, itemsPerPage, currentPage, req, param_name) => {
 
     if (totalItems <= itemsPerPage) {
         return false;
@@ -77,3 +77,7 @@ exports.paginate = (totalItems, itemsPerPage, currentPage, req, param_name) => {
 
     return html.join('');
 };
+
+
+exports.addPagenoToUrl = addPagenoToUrl;
+exports.paginate = paginate;

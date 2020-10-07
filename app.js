@@ -9,13 +9,15 @@ var SequelizeStore = require('connect-session-sequelize')(session.Store);
 var partials = require('express-partials');
 var flash = require('express-flash');
 var methodOverride = require('method-override');
+var cors = require('cors');
 require('dotenv').config();
 
 const passport = require('passport');
 
 var gobackRouter = require('./routes/goback');
 var loginRouter = require('./routes/login');
-var indexRouter = require('./routes/index');
+var apiRouter = require('./routes/api');
+var htmlRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var quizzesRouter = require('./routes/quizzes');
 
@@ -57,6 +59,11 @@ app.use(passport.initialize( {
 }));
 app.use(passport.session());
 
+
+// Control de Acceso HTTP (CORS)
+app.use(cors());
+
+
 // Dynamic Helper:
 app.use(function(req, res, next) {
 
@@ -73,11 +80,18 @@ app.use(function(req, res, next) {
   next();
 });
 
-app.use('/', gobackRouter);
-app.use('/', loginRouter);
-app.use('/', indexRouter);
+// Routes mounted at '/api'.
+app.use('/api', apiRouter);
+
+// Routes mounted at '/'. (no starting with /api/)
+app.use(/^(?!\/api\/)/, gobackRouter);
+app.use(/^(?!\/api\/)/, loginRouter);
+app.use(/^(?!\/api\/)/, htmlRouter);
+
+// User routes
 app.use('/users', usersRouter);
 app.use('/quizzes', quizzesRouter);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

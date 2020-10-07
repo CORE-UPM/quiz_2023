@@ -63,6 +63,12 @@ router.delete('/:userId(\\d+)',
 router.get('/:userId(\\d+)/photo',
   userController.photo);
 
+
+router.put('/:userId(\\d+)/token',
+  sessionController.loginRequired,
+  sessionController.adminOrMyselfRequired,
+  userController.createToken);   // generar un nuevo token
+
 router.get('/:userId(\\d+)/quizzes',
   sessionController.loginRequired,
   quizController.index);

@@ -1,3 +1,5 @@
+"use strict";
+
 const createError = require('http-errors');
 const Sequelize = require("sequelize");
 const {models} = require("../models");
@@ -5,6 +7,7 @@ const {models} = require("../models");
 const moment = require('moment');
 
 const paginate = require('../helpers/paginate').paginate;
+const authentication = require('../helpers/authentication');
 
 
 // Autoload the user with id equals to :userId
@@ -113,8 +116,11 @@ exports.create = async (req, res, next) => {
     }
 
     try {
+        // Create the token field:
+        user.token = authentication.createToken();
+
         // Save into the data base
-        user = await user.save({fields: ["username", "password", "salt", "accountTypeId"]});
+        user = await user.save({fields: ["username", "token", "password", "salt", "accountTypeId"]});
         req.flash('success', 'User created successfully.');
 
         try {
@@ -201,6 +207,8 @@ exports.update = async (req, res, next) => {
         req.flash('success', 'User updated successfully.');
 
         try {
+            if (user.accountTypeId) return; // Only local user can edit it photo.
+
             if (req.body.keepPhoto) return; // Don't change the photo.
 
             // The photo can be changed if more than 1 minute has passed since the last change:
@@ -291,3 +299,22 @@ exports.photo = (req, res, next) => {
         res.redirect("/images/face.png");
     }
 }
+
+//-----------------------------------------------------------
+
+// PUT /users/:id/token
+// Create a saves a new user access token.
+exports.createToken = async (req, res, next) => {
+
+    req.load.user.token = authentication.createToken();
+
+    try {
+        const user = await req.load.user.save({fields: ["token"]});
+        req.flash('success', 'User Access Token created successfully.');
+        res.redirect('/users/' + user.id);
+    } catch (error) {
+        next(error);
+    }
+};
+
+//-----------------------------------------------------------
