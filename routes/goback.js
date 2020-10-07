@@ -25,6 +25,7 @@ router.get(
       '/',
       '/author',
       '/users',
+      '/users/:id(\\d+)/quizzes',
       '/quizzes'
   ],
   saveBack);

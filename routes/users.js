@@ -3,6 +3,7 @@ var router = express.Router();
 
 const userController = require('../controllers/user');
 const sessionController = require("../controllers/session");
+const quizController = require("../controllers/quiz");
 
 
 // Autoload for routes using :userId
@@ -46,6 +47,11 @@ router.delete('/:userId(\\d+)',
   sessionController.loginRequired,
   sessionController.adminOrMyselfRequired,
   userController.destroy);
+
+
+router.get('/:userId(\\d+)/quizzes',
+  sessionController.loginRequired,
+  quizController.index);
 
 
 module.exports = router;
