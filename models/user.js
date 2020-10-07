@@ -19,11 +19,15 @@ module.exports = sequelize => {
 
     class User extends Model {
 
-        // Returns the ID of the given account type.
-        // AccountTypeId of local accounts is 0.
-        static accountTypeId(name) {
-            return accountTypes.indexOf(name);
-        }
+        verifyPassword(password) {
+        return crypt.encryptPassword(password, this.salt) === this.password;
+    }
+
+    // Returns the ID of the given account type.
+    // AccountTypeId of local accounts is 0.
+    static accountTypeId(name) {
+        return accountTypes.indexOf(name);
+    }
 
         get displayName() {
             if (!this.accountTypeId) {

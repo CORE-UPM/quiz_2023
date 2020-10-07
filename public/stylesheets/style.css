@@ -47,6 +47,15 @@ body {
   color: white;
 }
 
+#mainHeader .login {
+  float: right;
+  color: white;
+}
+
+#mainHeader a {
+  color: white;
+}
+
 #mainNav a {
   margin: 0px 5px;
 }

@@ -10,7 +10,10 @@ var partials = require('express-partials');
 var flash = require('express-flash');
 var methodOverride = require('method-override');
 
+const passport = require('passport');
+
 var gobackRouter = require('./routes/goback');
+var loginRouter = require('./routes/login');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var quizzesRouter = require('./routes/quizzes');
@@ -47,7 +50,27 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(partials());
 app.use(flash());
 
+
+app.use(passport.initialize( {
+  userProperty: 'loginUser' // defaults to 'user' if omitted
+}));
+app.use(passport.session());
+
+// Dynamic Helper:
+app.use(function(req, res, next) {
+
+  // To use req.loginUser in the views
+  res.locals.loginUser = req.loginUser && {
+    id: req.loginUser.id,
+    displayName: req.loginUser.displayName,
+    isAdmin: req.loginUser.isAdmin
+  };
+
+  next();
+});
+
 app.use('/', gobackRouter);
+app.use('/', loginRouter);
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/quizzes', quizzesRouter);

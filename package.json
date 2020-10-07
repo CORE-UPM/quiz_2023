@@ -25,6 +25,8 @@
     "http-errors": "~1.6.3",
     "method-override": "^3.0.0",
     "morgan": "~1.9.1",
+    "passport": "^0.4.1",
+    "passport-local": "^1.0.0",
     "sequelize": "^6.37.1",
     "sequelize-cli": "^6.6.2",
     "serve-favicon": "^2.5.0",

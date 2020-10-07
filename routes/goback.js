@@ -19,7 +19,7 @@ function saveBack(req, res, next) {
 }
 
 // Goback routes are GET routes that do not end in:
-//   /new, /edit, /play, /check, or /:id.
+//   /new, /edit, /play, /check, /login or /:id.
 router.get(
   [
       '/',
