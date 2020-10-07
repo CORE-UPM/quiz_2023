@@ -23,7 +23,8 @@ function saveBack(req, res, next) {
 router.get(
   [
       '/',
-      '/author'
+      '/author',
+      '/quizzes'
   ],
   saveBack);
 

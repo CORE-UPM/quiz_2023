@@ -56,11 +56,22 @@ body {
   text-align: left;
 }
 
+input[type=text], input[type=password] {
+  background-color: white;
+  height: 15px;
+  transition: ease-in-out, background-color .2s ease-in-out, height .2s ease-in-out;
+}
+
+input[type=text]:focus, input[type=password]:focus {
+  background-color: var(--secondary2);
+  height: 20px;
+}
+
 a {
   color: var(--primary);
 }
 
-a.button {
+a.button, input.button {
   display: inline-block;
   font-size: x-small;
   text-decoration: none;
@@ -72,7 +83,7 @@ a.button {
   border: solid 1px lightgray;
 }
 
-a.button:hover {
+a.button:hover, input.button:hover {
   background: lightgray;
 }
 

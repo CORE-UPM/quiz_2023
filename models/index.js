@@ -9,5 +9,6 @@ const url = process.env.DATABASE_URL || "sqlite:quiz.sqlite";
 const sequelize = new Sequelize(url);
 
 const Session = require('./session')(sequelize);
+const Quiz = require('./quiz')(sequelize);
 
 module.exports = sequelize;

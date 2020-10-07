@@ -8,10 +8,12 @@ var session = require('express-session');
 var SequelizeStore = require('connect-session-sequelize')(session.Store);
 var partials = require('express-partials');
 var flash = require('express-flash');
+var methodOverride = require('method-override');
 
 var gobackRouter = require('./routes/goback');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var quizzesRouter = require('./routes/quizzes');
 
 var app = express();
 
@@ -40,6 +42,7 @@ app.use(session({
   saveUninitialized: true
 }));
 
+app.use(methodOverride('_method', {methods: ["POST", "GET"]}));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(partials());
 app.use(flash());
@@ -47,6 +50,7 @@ app.use(flash());
 app.use('/', gobackRouter);
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/quizzes', quizzesRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
