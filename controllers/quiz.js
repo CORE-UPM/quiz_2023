@@ -9,7 +9,11 @@ const paginate = require('../helpers/paginate').paginate;
 exports.load = async (req, res, next, quizId) => {
 
     try {
-        const quiz = await models.Quiz.findByPk(quizId);
+        const quiz = await models.Quiz.findByPk(quizId, {
+            include: [
+                {model: models.User, as: 'author'}
+            ]
+        });
         if (quiz) {
             req.load = {...req.load, quiz};
             next();
@@ -18,6 +22,21 @@ exports.load = async (req, res, next, quizId) => {
         }
     } catch (error) {
         next(error);
+    }
+};
+
+
+// MW that allows actions only if the user logged in is admin or is the author of the quiz.
+exports.adminOrAuthorRequired = (req, res, next) => {
+
+    const isAdmin  = !!req.loginUser.isAdmin;
+    const isAuthor = req.load.quiz.authorId === req.loginUser.id;
+
+    if (isAdmin || isAuthor) {
+        next();
+    } else {
+        console.log('Prohibited operation: The logged in user is not the author of the quiz, nor an administrator.');
+        res.send(403);
     }
 };
 
@@ -53,6 +72,7 @@ exports.index = async (req, res, next) => {
 
         findOptions.offset = items_per_page * (pageno - 1);
         findOptions.limit = items_per_page;
+        findOptions.include = [{model: models.User, as: 'author'}];
 
         const quizzes = await models.Quiz.findAll(findOptions);
         res.render('quizzes/index.ejs', {
@@ -90,14 +110,17 @@ exports.create = async (req, res, next) => {
 
     const {question, answer} = req.body;
 
+    const authorId = req.loginUser && req.loginUser.id || 0;
+
     let quiz = models.Quiz.build({
         question,
-        answer
+        answer,
+        authorId
     });
 
     try {
         // Saves only the fields question and answer into the DDBB
-        quiz = await quiz.save({fields: ["question", "answer"]});
+        quiz = await quiz.save({fields: ["question", "answer", "authorId"]});
         req.flash('success', 'Quiz created successfully.');
         res.redirect('/quizzes/' + quiz.id);
     } catch (error) {
